@@ -1,0 +1,162 @@
+@import url('https://cdn.jsdelivr.net/gh/skb10x/Gilroy-SATV@main/Gilroy.css');
+
+* {
+    box-sizing: border-box;
+    font-family: Gilroy;
+}
+
+:root {
+    --bg: #f7f7f8;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --text: #000;
+    --accent: #22c55e;
+    --border: #e5e7eb;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.card {
+    width: min(720px, 94vw);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: clamp(22px, 3.8vw, 30px);
+    letter-spacing: -0.02em;
+}
+
+.sub {
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.options {
+    display: grid;
+    gap: 12px;
+}
+
+.option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: #EEE;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 6px 3px rgb(0 0 0 / 43%);
+}
+
+.option:hover {
+    border-color: var(--accent);
+    background: #ecfdf5;
+}
+
+.option strong,
+.option span {
+    position: relative;
+    z-index: 1;
+}
+
+.pct {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+}
+
+/* === RIVER === */
+.option.active[data-choice="river"] {
+    background: white;
+    border-color: #0000;
+}
+
+.option.active[data-choice="river"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            #fff 35%,
+            #dc2626 35%,
+            #dc2626 65%,
+            #fff 65%);
+    opacity: 0.9;
+}
+
+.option.active[data-choice="river"] strong,
+.option.active[data-choice="river"] span {
+    background: white;
+    color: #dc2626;
+}
+
+/* === BOCA === */
+.option.active[data-choice="boca"] {
+    background: linear-gradient(180deg,
+            #0033a0 33%,
+            #ffcc00 33%,
+            #ffcc00 66%,
+            #0033a0 66%);
+    border-color: #0033a000;
+    color: #0033a0 !important;
+}
+
+.option.active[data-choice="boca"] strong,
+.option.active[data-choice="boca"] span {
+    color: #0033a0 !important;
+    background: transparent;
+}
+
+.option.active[data-choice="boca"] strong {
+    margin-top: -0.1em;
+}
+
+/* === EMPATE === */
+.option.active[data-choice="empate"] {
+    background: repeating-linear-gradient(45deg,
+            #d1d5db,
+            #d1d5db 10px,
+            #e5e7eb 10px,
+            #e5e7eb 20px);
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+.option.active[data-choice="empate"] strong,
+.option.active[data-choice="empate"] span {
+    color: #374151;
+    background: transparent;
+}
+
+.counts {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: right;
+}
+
+.note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    text-align: center;
+}
