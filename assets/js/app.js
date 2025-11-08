@@ -29,12 +29,10 @@ async function updateUserArea() {
         const btn = dropdown.querySelector(".dropdown-btn");
         btn.addEventListener("click", () => dropdown.classList.toggle("show"));
 
-        // Cerrar dropdown al hacer clic fuera
         document.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) dropdown.classList.remove("show");
         });
 
-        // Logout
         dropdown.querySelector("#logoutBtn").addEventListener("click", async (e) => {
             e.preventDefault();
             await supa.auth.signOut();
@@ -45,10 +43,9 @@ async function updateUserArea() {
     }
 }
 
-// === Proteger páginas con login requerido
+// === Protección para páginas que requieren login
 (async function guard() {
-    const requireAuth =
-        document.body.getAttribute("data-require-auth") === "true";
+    const requireAuth = document.body.getAttribute("data-require-auth") === "true";
     const { data } = await supa.auth.getSession();
 
     if (requireAuth && !data.session) {
@@ -90,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // === REGISTRO (sin verificación de correo) ===
+    // === REGISTRO ===
     const registerForm = document.getElementById("registerForm");
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -106,32 +103,22 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
+                // Crear usuario
                 const { data, error } = await supa.auth.signUp({
                     email,
                     password,
-                    options: {
-                        data: {
-                            username,
-                            fullname,
-                            autoConfirm: true, // ⚡ Evita correo de verificación
-                        },
-                    },
+                    options: { data: { username, fullname } },
                 });
-
                 if (error) throw error;
 
-                // Auto-login inmediato
+                // Login inmediato (ya confirmado)
                 const { error: signInError } = await supa.auth.signInWithPassword({
                     email,
                     password,
                 });
                 if (signInError) throw signInError;
 
-                alert(
-                    `Cuenta creada correctamente. ¡Bienvenido, ${username || fullname || email
-                    }!`
-                );
-
+                alert(`Cuenta creada correctamente. ¡Bienvenido ${username || fullname || email}!`);
                 window.location.href = "/superclasico";
             } catch (err) {
                 console.error("Error registrando usuario:", err);
