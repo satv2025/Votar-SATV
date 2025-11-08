@@ -2,9 +2,9 @@
 // ⚽ SUPERCLÁSICO 2025 - ENCUESTA
 // ===============================
 
-// Configuración Supabase
 const SUPABASE_URL = "https://dpmqzuvyygwreqpffpca.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwbXF6dXZ5eWd3cmVxcGZmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1NDk4MjcsImV4cCI6MjA3ODEyNTgyN30.BxgH_mcXgjwuiRz8yhwpxnF-UDkLyFpl16Yo0sz-0Qk"; // ⚠️ reemplazá con tu anon key pública
+const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwbXF6dXZ5eWd3cmVxcGZmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1NDk4MjcsImV4cCI6MjA3ODEyNTgyN30.BxgH_mcXgjwuiRz8yhwpxnF-UDkLyFpl16Yo0sz-0Qk";
 const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const choices = ["river", "empate", "boca"];
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // === Cargar todos los votos ===
 async function loadVotes() {
-    const { data, error } = await supa.from("votes").select("*");
+    const { data, error } = await supa.from("votes").select("choice");
     if (error) {
         console.error("Error cargando votos:", error);
         return;
@@ -92,10 +92,13 @@ async function handleVote(choice) {
         return;
     }
 
-    const { error } = await supa.from("votes").upsert(
-        [{ user_id: user.id, choice }],
-        { onConflict: "user_id" }
-    );
+    const { error } = await supa
+        .from("votes")
+        .upsert(
+            [{ user_id: user.id, choice }],
+            { onConflict: "user_id" }
+        )
+        .select(); // ✅ fuerza retorno y refresco
 
     if (error) {
         console.error("Error al votar:", error);
@@ -119,11 +122,13 @@ function highlightChoice(choice) {
 // === Realtime ===
 function subscribeRealtime() {
     supa
-        .channel("realtime:votes")
+        .channel("public:votes")
         .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "votes" },
             () => loadVotes()
         )
-        .subscribe();
+        .subscribe((status) =>
+            console.log("🔄 Canal realtime:", status)
+        );
 }
