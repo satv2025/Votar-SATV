@@ -1,10 +1,10 @@
 // ===============================
-// 👤 Autenticación de usuario
+// 👤 Autenticación de usuario (SATV)
 // ===============================
 
 const supa = window.supa;
 
-// Actualizar área de usuario (header)
+// === Actualizar área de usuario (header)
 async function updateUserArea() {
     const { data } = await supa.auth.getSession();
     const userArea = document.getElementById("userArea");
@@ -28,10 +28,13 @@ async function updateUserArea() {
         const dropdown = userArea.querySelector(".dropdown");
         const btn = dropdown.querySelector(".dropdown-btn");
         btn.addEventListener("click", () => dropdown.classList.toggle("show"));
+
+        // Cerrar si clic fuera
         document.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) dropdown.classList.remove("show");
         });
 
+        // Logout
         dropdown.querySelector("#logoutBtn").addEventListener("click", async (e) => {
             e.preventDefault();
             await supa.auth.signOut();
@@ -42,16 +45,22 @@ async function updateUserArea() {
     }
 }
 
-// Proteger páginas que requieran login
+// === Proteger páginas con login requerido
 (async function guard() {
-    const requireAuth = document.body.getAttribute("data-require-auth") === "true";
+    const requireAuth =
+        document.body.getAttribute("data-require-auth") === "true";
     const { data } = await supa.auth.getSession();
-    if (requireAuth && !data.session) window.location.href = "/login";
+
+    if (requireAuth && !data.session) {
+        window.location.href = "/login";
+    }
+
     updateUserArea();
 })();
 
-// Login
+// === Manejo de Login y Registro
 document.addEventListener("DOMContentLoaded", () => {
+    // === LOGIN ===
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
@@ -59,10 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
             const { error } = await supa.auth.signInWithPassword({ email, password });
+
             if (error) alert(error.message);
             else window.location.href = "/superclasico";
         });
 
+        // Login con Google
         const googleBtn = document.getElementById("googleLogin");
         if (googleBtn) {
             googleBtn.addEventListener("click", async () => {
@@ -74,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Registro
+    // === REGISTRO (sin verificación de correo) ===
     const registerForm = document.getElementById("registerForm");
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -84,17 +95,30 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
 
-            const { error } = await supa.auth.signUp({
+            // Crear cuenta sin verificación
+            const { data, error } = await supa.auth.signUp({
                 email,
                 password,
-                options: { data: { username, fullname }, emailRedirectTo: null },
+                options: {
+                    data: { username, fullname },
+                    emailRedirectTo: null,
+                },
             });
 
-            if (error) alert(error.message);
-            else {
-                alert("Cuenta creada. ¡Podés iniciar sesión ahora!");
-                window.location.href = "/login";
+            if (error) {
+                alert(error.message);
+                return;
             }
+
+            // Auto-login inmediato (sin verificación)
+            await supa.auth.signInWithPassword({ email, password });
+
+            alert(
+                `Cuenta creada correctamente. ¡Bienvenido, ${username || fullname || email
+                }!`
+            );
+
+            window.location.href = "/superclasico";
         });
     }
 });
