@@ -1,26 +1,18 @@
-{
-  "version": 2,
-  "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/index.html",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/:path*.html",
-      "destination": "/:path*",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/:folder",
-      "destination": "/:folder/:folder.html"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/:path*.html"
-    }
-  ]
-}
+"rewrites": [
+  {
+    "source": "/superclasico",
+    "destination": "/superclasico/superclasico.html"
+  },
+  {
+    "source": "/login",
+    "destination": "/login.html"
+  },
+  {
+    "source": "/register",
+    "destination": "/register.html"
+  },
+  {
+    "source": "/:path*",
+    "destination": "/:path*.html"
+  }
+]

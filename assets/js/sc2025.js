@@ -1,11 +1,7 @@
 // ===============================
 // ⚽ SUPERCLÁSICO 2025 - ENCUESTA
 // ===============================
-
-const SUPABASE_URL = "https://dpmqzuvyygwreqpffpca.supabase.co";
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwbXF6dXZ5eWd3cmVxcGZmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1NDk4MjcsImV4cCI6MjA3ODEyNTgyN30.BxgH_mcXgjwuiRz8yhwpxnF-UDkLyFpl16Yo0sz-0Qk";
-const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supa = window.supa;
 
 const choices = ["river", "empate", "boca"];
 const pctEls = {
@@ -20,7 +16,6 @@ const optionEls = document.querySelectorAll(".option");
 let user = null;
 let userVote = null;
 
-// === Iniciar ===
 document.addEventListener("DOMContentLoaded", async () => {
     const { data } = await supa.auth.getSession();
     user = data.session?.user || null;
@@ -39,13 +34,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 });
 
-// === Cargar todos los votos ===
 async function loadVotes() {
     const { data, error } = await supa.from("votes").select("choice");
-    if (error) {
-        console.error("Error cargando votos:", error);
-        return;
-    }
+    if (error) return console.error(error);
 
     const totals = { river: 0, empate: 0, boca: 0 };
     data.forEach((v) => {
@@ -61,7 +52,6 @@ async function loadVotes() {
     });
 }
 
-// === Cargar el voto del usuario ===
 async function loadUserVote() {
     if (!user) return;
     const { data, error } = await supa
@@ -70,39 +60,26 @@ async function loadUserVote() {
         .eq("user_id", user.id)
         .maybeSingle();
 
-    if (error) console.error("Error cargando voto usuario:", error);
+    if (error) console.error(error);
     else if (data) {
         userVote = data.choice;
         highlightChoice(data.choice);
         msgEl.textContent = "Ya votaste. Podés cambiar tu elección si querés.";
-    } else {
-        msgEl.textContent = "Votá tu favorito para ver los resultados.";
-    }
+    } else msgEl.textContent = "Votá tu favorito para ver los resultados.";
 }
 
-// === Votar o cambiar voto ===
 async function handleVote(choice) {
-    if (!user) {
-        alert("Iniciá sesión para votar.");
-        return;
-    }
-
-    if (userVote === choice) {
-        alert("Ya elegiste esa opción.");
-        return;
-    }
+    if (!user) return alert("Iniciá sesión para votar.");
+    if (userVote === choice) return alert("Ya elegiste esa opción.");
 
     const { error } = await supa
         .from("votes")
-        .upsert(
-            [{ user_id: user.id, choice }],
-            { onConflict: "user_id" }
-        )
-        .select(); // ✅ fuerza retorno y refresco
+        .upsert([{ user_id: user.id, choice }], { onConflict: "user_id" })
+        .select();
 
     if (error) {
-        console.error("Error al votar:", error);
-        alert("Error al enviar el voto.");
+        console.error(error);
+        alert("Error al votar.");
         return;
     }
 
@@ -112,23 +89,17 @@ async function handleVote(choice) {
     await loadVotes();
 }
 
-// === Resaltar opción votada ===
 function highlightChoice(choice) {
     optionEls.forEach((o) =>
         o.classList.toggle("active", o.dataset.choice === choice)
     );
 }
 
-// === Realtime ===
 function subscribeRealtime() {
     supa
         .channel("public:votes")
-        .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "votes" },
-            () => loadVotes()
+        .on("postgres_changes", { event: "*", schema: "public", table: "votes" }, () =>
+            loadVotes()
         )
-        .subscribe((status) =>
-            console.log("🔄 Canal realtime:", status)
-        );
+        .subscribe();
 }

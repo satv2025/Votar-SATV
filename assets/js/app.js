@@ -1,14 +1,10 @@
-// ======================================
-// 🔐 Autenticación y UI dinámica SATV
-// ======================================
+// ===============================
+// 👤 Autenticación de usuario
+// ===============================
 
-const SUPABASE_URL = "https://dpmqzuvyygwreqpffpca.supabase.co";
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwbXF6dXZ5eWd3cmVxcGZmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1NDk4MjcsImV4cCI6MjA3ODEyNTgyN30.BxgH_mcXgjwuiRz8yhwpxnF-UDkLyFpl16Yo0sz-0Qk";
+const supa = window.supa;
 
-const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// === Actualiza zona de usuario en el header ===
+// Actualizar área de usuario (header)
 async function updateUserArea() {
     const { data } = await supa.auth.getSession();
     const userArea = document.getElementById("userArea");
@@ -31,27 +27,22 @@ async function updateUserArea() {
 
         const dropdown = userArea.querySelector(".dropdown");
         const btn = dropdown.querySelector(".dropdown-btn");
-        btn.addEventListener("click", () =>
-            dropdown.classList.toggle("show")
-        );
-
+        btn.addEventListener("click", () => dropdown.classList.toggle("show"));
         document.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) dropdown.classList.remove("show");
         });
 
-        dropdown
-            .querySelector("#logoutBtn")
-            .addEventListener("click", async (e) => {
-                e.preventDefault();
-                await supa.auth.signOut();
-                window.location.reload();
-            });
+        dropdown.querySelector("#logoutBtn").addEventListener("click", async (e) => {
+            e.preventDefault();
+            await supa.auth.signOut();
+            window.location.reload();
+        });
     } else {
         userArea.innerHTML = `<a href="/login">Iniciar sesión</a>`;
     }
 }
 
-// === Protección de páginas ===
+// Proteger páginas que requieran login
 (async function guard() {
     const requireAuth = document.body.getAttribute("data-require-auth") === "true";
     const { data } = await supa.auth.getSession();
@@ -59,7 +50,7 @@ async function updateUserArea() {
     updateUserArea();
 })();
 
-// === Formularios de login / registro ===
+// Login
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
@@ -67,10 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
-            const { error } = await supa.auth.signInWithPassword({
-                email,
-                password,
-            });
+            const { error } = await supa.auth.signInWithPassword({ email, password });
             if (error) alert(error.message);
             else window.location.href = "/superclasico";
         });
@@ -86,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Registro
     const registerForm = document.getElementById("registerForm");
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -95,29 +84,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
 
-            // 👇 Registro sin verificación de correo
             const { error } = await supa.auth.signUp({
                 email,
                 password,
-                options: {
-                    data: { username, fullname },
-                    emailRedirectTo: null,
-                    // 🔥 No enviar mail de confirmación
-                    // Supabase lo hace si emailRedirectTo está definido
-                },
+                options: { data: { username, fullname }, emailRedirectTo: null },
             });
 
-            if (error) {
-                alert(error.message);
-            } else {
-                alert("Cuenta creada correctamente ✅");
-                // Autologin inmediato (sin verificación)
-                const { error: loginError } = await supa.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (loginError) alert(loginError.message);
-                else window.location.href = "/superclasico";
+            if (error) alert(error.message);
+            else {
+                alert("Cuenta creada. ¡Podés iniciar sesión ahora!");
+                window.location.href = "/login";
             }
         });
     }
