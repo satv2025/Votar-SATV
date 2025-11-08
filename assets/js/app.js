@@ -1,8 +1,7 @@
 // ===============================
 // 👤 Autenticación de usuario (SATV)
 // ===============================
-
-const supa = window.supa;
+import { supa } from "./supabaseClient.js";
 
 // === Actualizar área de usuario (header)
 async function updateUserArea() {
@@ -28,7 +27,6 @@ async function updateUserArea() {
         const dropdown = userArea.querySelector(".dropdown");
         const btn = dropdown.querySelector(".dropdown-btn");
         btn.addEventListener("click", () => dropdown.classList.toggle("show"));
-
         document.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) dropdown.classList.remove("show");
         });
@@ -103,15 +101,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                // Crear usuario
-                const { data, error } = await supa.auth.signUp({
+                const { error } = await supa.auth.signUp({
                     email,
                     password,
                     options: { data: { username, fullname } },
                 });
                 if (error) throw error;
 
-                // Login inmediato (ya confirmado)
+                // Login inmediato
                 const { error: signInError } = await supa.auth.signInWithPassword({
                     email,
                     password,
