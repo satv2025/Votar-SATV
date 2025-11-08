@@ -27,10 +27,13 @@ async function updateUserArea() {
         const dropdown = userArea.querySelector(".dropdown");
         const btn = dropdown.querySelector(".dropdown-btn");
         btn.addEventListener("click", () => dropdown.classList.toggle("show"));
+
+        // Cerrar menú si se hace clic fuera
         document.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) dropdown.classList.remove("show");
         });
 
+        // Cerrar sesión
         dropdown.querySelector("#logoutBtn").addEventListener("click", async (e) => {
             e.preventDefault();
             await supa.auth.signOut();
@@ -60,17 +63,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value;
+
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("password");
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
 
             if (!email || !password) {
                 alert("Por favor completá todos los campos.");
                 return;
             }
 
-            const { error } = await supa.auth.signInWithPassword({ email, password });
-            if (error) alert(error.message);
-            else window.location.href = "/superclasico";
+            try {
+                const { error } = await supa.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                window.location.href = "/superclasico";
+            } catch (err) {
+                alert(`Error al iniciar sesión: ${err.message}`);
+            }
         });
 
         // Login con Google
@@ -90,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
             e.preventDefault();
+
             const username = document.getElementById("username").value.trim();
             const fullname = document.getElementById("fullname").value.trim();
             const email = document.getElementById("email").value.trim();
@@ -101,14 +112,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                const { error } = await supa.auth.signUp({
+                // Crear usuario
+                const { error: signUpError } = await supa.auth.signUp({
                     email,
                     password,
-                    options: { data: { username, fullname } },
+                    options: {
+                        data: { username, fullname },
+                        emailRedirectTo: null, // evita verificación
+                    },
                 });
-                if (error) throw error;
 
-                // Login inmediato
+                if (signUpError) throw signUpError;
+
+                // Iniciar sesión automáticamente
                 const { error: signInError } = await supa.auth.signInWithPassword({
                     email,
                     password,
@@ -118,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert(`Cuenta creada correctamente. ¡Bienvenido ${username || fullname || email}!`);
                 window.location.href = "/superclasico";
             } catch (err) {
-                console.error("Error registrando usuario:", err);
+                console.error("Error en el registro:", err);
                 alert(`Error: ${err.message}`);
             }
         });
