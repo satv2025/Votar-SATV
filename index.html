@@ -2,31 +2,17 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sol Argentino TV - Canal de Televisión Argentino</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SATV · Votaciones Oficiales</title>
 
-    <!-- CSS Absolutos -->
-    <link rel="stylesheet" href="https://solargentinotv.com.ar/assets/css/satv.css">
-    <link rel="stylesheet" href="https://solargentinotv.com.ar/assets/css/footer.css">
-    <link rel="stylesheet" href="https://solargentinotv.com.ar/assets/css/apps.css">
-
-    <!-- Favicon -->
-    <link rel="icon" href="https://solargentinotv.com.ar/assets/media/images/Logo SATV WEB BETA.ico"
+    <link rel="icon"
+        href="https://solargentinotv.com.arhttps://votar.solargentinotv.com.ar/assets/media/images/Logo SATV WEB BETA.ico"
         type="image/x-icon">
+    <link rel="stylesheet" href="https://votar.solargentinotv.com.ar/assets/css/app.css" />
 
-    <style>
-        footer {
-            bottom: 0em;
-            position: absolute;
-        }
-
-        .main-content h1,
-        .main-content p,
-        .main-content div {
-            color: #0078d4;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
+    <script defer src="https://votar.solargentinotv.com.ar/assets/js/app.js"></script>
 </head>
 
 <body>
@@ -36,16 +22,16 @@
                 <h1 class="logo">Sol Argentino TV</h1>
                 <nav class="navbar">
                     <ul class="nav-menu">
-                        <li><a href="https://solargentinotv.com.ar" class="active">Inicio</a></li>
-                        <li><a href="grilla">Programación</a></li>
-                        <li><a href="vivo">Ver Transmisión</a></li>
-                        <li><a href="noticias">Noticias</a></li>
-                        <li><a href="nosotros">Nosotros</a></li>
-                        <li><a href="contacto">Contacto</a></li>
+                        <li><a href="https://solargentinotv.com.ar">Inicio</a></li>
+                        <li><a href="https://solargentinotv.com.ar/grilla">Programación</a></li>
+                        <li><a href="https://solargentinotv.com.ar/vivo">Ver Transmisión</a></li>
+                        <li><a href="https://solargentinotv.com.ar/noticias">Noticias</a></li>
+                        <li><a href="https://solargentinotv.com.ar/nosotros">Nosotros</a></li>
+                        <li><a href="https://solargentinotv.com.ar/contacto">Contacto</a></li>
                     </ul>
                 </nav>
             </div>
-            <button class="apps-button" onclick="toggleModal()">
+            <button class="apps-button" onclick="toggleModal()" aria-label="Abrir apps">
                 <div class="apps-icon">
                     <div></div>
                     <div></div>
@@ -60,8 +46,7 @@
             </button>
         </header>
 
-        <!-- Modal de Apps -->
-        <div class="modal" id="appsModal">
+        <div class="modal" id="appsModal" hidden>
             <h3>Apps <span class="beta">BETA</span></h3>
             <ul>
                 <li><a href="https://movies.solargentinotv.com.ar" target="_blank">🎥</a></li>
@@ -69,43 +54,19 @@
             </ul>
         </div>
 
-        <!-- Contenido principal del huevo de pascua -->
-        <main class="main-content"
-            style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center;">
-            <img id="egg"
-                src="https://png.pngtree.com/png-clipart/20210309/original/pngtree-3d-easter-egg-blue-png-image_5874336.png"
-                alt="Huevo azul" style="width: 140px; height: auto; cursor: pointer;" />
-            <h1>¡Encontraste un huevo de pascua!</h1>
-            <p>Oops! You found an Easter Egg!</p>
-            <div id="secretMsg" style="opacity: 0; transition: opacity 0.6s ease; margin-top: 1rem; font-weight: 600;">✨
-                "El mejor canal es el que se hace con pasión." ✨
+        <main class="centered">
+            <h1>Bienvenido a las Votaciones Oficiales</h1>
+            <p>Ingresá para participar en la encuesta del Superclásico.</p>
+            <div class="btns">
+                <a class="btn" href="/login.html">Iniciar Sesión</a>
+                <a class="btn secondary" href="/register.html">Registrarse</a>
             </div>
         </main>
 
         <footer>
-            <p>&copy; 2025 Sol Argentino TV - Todos los derechos reservados. Nos actualizamos cada día pensando en vos.
-                <a href="contacto">Contactanos</a>
-            </p>
+            <p>&copy; 2025 Sol Argentino TV — <a href="https://solargentinotv.com.ar/contacto">Contactanos</a></p>
         </footer>
     </div>
-
-    <!-- Sonido tipo "pop" embebido -->
-    <audio id="popSound" preload="auto">
-        <source src="data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAeAAACABAAZGF0YQAAAAA="
-            type="audio/mp3">
-    </audio>
-
-    <script>
-        const egg = document.getElementById('egg');
-        const msg = document.getElementById('secretMsg');
-        const sound = document.getElementById('popSound');
-
-        egg.addEventListener('click', () => {
-            sound.currentTime = 0;
-            sound.play();
-            msg.style.opacity = msg.style.opacity === '1' ? '0' : '1';
-        });
-    </script>
 </body>
 
 </html>

@@ -69,9 +69,21 @@ h1 {
     box-shadow: 0 0 6px 3px rgb(0 0 0 / 43%);
 }
 
-.option:hover {
+/* Hover solo para no activas */
+.option:not(.active):hover {
     border-color: var(--accent);
     background: #ecfdf5;
+}
+
+/* Mantener estilo activo al pasar el mouse */
+.option.active:hover {
+    background: inherit;
+    border-color: transparent !important;
+}
+
+/* Evita borde verde en activas */
+.option.active {
+    border-color: transparent !important;
 }
 
 .option strong,
@@ -88,66 +100,139 @@ h1 {
 
 /* === RIVER === */
 .option.active[data-choice="river"] {
-    background: white;
-    border-color: #0000;
+    position: relative;
+    background: linear-gradient(315deg,
+            #ffffff 35%,
+            #dc2626 35%,
+            #dc2626 65%,
+            #ffffff 65%);
+    color: #dc2626;
+    border-radius: 16px;
+    border: none;
 }
 
 .option.active[data-choice="river"]::before {
     content: "";
     position: absolute;
     inset: 0;
+    padding: 3px;
+    border-radius: 16px;
+    /* borde invertido (top ↔ bottom) */
     background: linear-gradient(135deg,
-            #fff 35%,
+            #ffffff 35%,
             #dc2626 35%,
             #dc2626 65%,
-            #fff 65%);
-    opacity: 0.9;
+            #ffffff 65%);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
 }
 
 .option.active[data-choice="river"] strong,
 .option.active[data-choice="river"] span {
-    background: white;
     color: #dc2626;
+    background: transparent;
+    position: relative;
+    z-index: 1;
 }
 
 /* === BOCA === */
 .option.active[data-choice="boca"] {
+    position: relative;
     background: linear-gradient(180deg,
             #0033a0 33%,
             #ffcc00 33%,
             #ffcc00 66%,
             #0033a0 66%);
-    border-color: #0033a000;
-    color: #0033a0 !important;
+    color: #0033a0;
+    border-radius: 16px;
+    border: none;
+}
+
+.option.active[data-choice="boca"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 16px;
+    background: linear-gradient(180deg,
+            #0033a0 33%,
+            #ffcc00 33%,
+            #ffcc00 66%,
+            #0033a0 66%);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: background 0.25s ease;
+}
+
+/* BOCA: hover = borde blanco, normal = borde correcto */
+.option.active[data-choice="boca"]:hover::before {
+    background: #fff;
+}
+
+.option.active[data-choice="boca"]:not(:hover)::before {
+    background: linear-gradient(180deg,
+            #0033a0 33%,
+            #ffcc00 33%,
+            #ffcc00 66%,
+            #0033a0 66%);
 }
 
 .option.active[data-choice="boca"] strong,
 .option.active[data-choice="boca"] span {
-    color: #0033a0 !important;
+    color: #0033a0;
     background: transparent;
-}
-
-.option.active[data-choice="boca"] strong {
-    margin-top: -0.1em;
+    position: relative;
+    z-index: 1;
 }
 
 /* === EMPATE === */
 .option.active[data-choice="empate"] {
+    position: relative;
     background: repeating-linear-gradient(45deg,
             #d1d5db,
             #d1d5db 10px,
             #e5e7eb 10px,
             #e5e7eb 20px);
-    border-color: #9ca3af;
-    color: #111827;
+    border-radius: 16px;
+    border: none;
+}
+
+.option.active[data-choice="empate"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 16px;
+    background: repeating-linear-gradient(45deg,
+            #9ca3af,
+            #9ca3af 10px,
+            #e5e7eb 10px,
+            #e5e7eb 20px);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
 }
 
 .option.active[data-choice="empate"] strong,
 .option.active[data-choice="empate"] span {
     color: #374151;
     background: transparent;
+    position: relative;
+    z-index: 1;
 }
 
+/* === Texto y contadores === */
 .counts {
     color: var(--muted);
     font-size: 13px;
