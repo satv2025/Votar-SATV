@@ -1,7 +1,8 @@
 // ===============================
-// ⚽ SUPERCLÁSICO 2025 - ENCUESTA
+// ⚽ SUPERCLÁSICO 2025 - ENCUESTA ANÓNIMA (SUPABASE)
 // ===============================
 const supa = window.supa;
+const POLL_ID = "superclasico-2025";
 
 const choices = ["river", "empate", "boca"];
 const pctEls = {
@@ -13,16 +14,15 @@ const totalEl = document.getElementById("totalVotes");
 const msgEl = document.getElementById("voteMsg");
 const optionEls = document.querySelectorAll(".option");
 
-let user = null;
+let anonId = null;
 let userVote = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const { data } = await supa.auth.getSession();
-    user = data.session?.user || null;
-
-    if (!user) {
-        msgEl.textContent = "Debés iniciar sesión para votar.";
-        return;
+    // Generar o recuperar ID anónimo local
+    anonId = localStorage.getItem("anon_id");
+    if (!anonId) {
+        anonId = crypto.randomUUID();
+        localStorage.setItem("anon_id", anonId);
     }
 
     await loadVotes();
@@ -35,12 +35,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function loadVotes() {
-    const { data, error } = await supa.from("votes").select("choice");
+    const { data, error } = await supa
+        .from("votes")
+        .select("option")
+        .eq("poll_id", POLL_ID);
+
     if (error) return console.error(error);
 
     const totals = { river: 0, empate: 0, boca: 0 };
     data.forEach((v) => {
-        if (choices.includes(v.choice)) totals[v.choice]++;
+        if (choices.includes(v.option)) totals[v.option]++;
     });
 
     const totalVotes = Object.values(totals).reduce((a, b) => a + b, 0);
@@ -53,28 +57,33 @@ async function loadVotes() {
 }
 
 async function loadUserVote() {
-    if (!user) return;
     const { data, error } = await supa
         .from("votes")
-        .select("choice")
-        .eq("user_id", user.id)
+        .select("option")
+        .eq("poll_id", POLL_ID)
+        .eq("user_id", anonId)
         .maybeSingle();
 
-    if (error) console.error(error);
-    else if (data) {
-        userVote = data.choice;
-        highlightChoice(data.choice);
+    if (error) return console.error(error);
+
+    if (data) {
+        userVote = data.option;
+        highlightChoice(data.option);
         msgEl.textContent = "Ya votaste. Podés cambiar tu elección si querés.";
-    } else msgEl.textContent = "Votá tu favorito para ver los resultados.";
+    } else {
+        msgEl.textContent = "Votá tu favorito para ver los resultados.";
+    }
 }
 
 async function handleVote(choice) {
-    if (!user) return alert("Iniciá sesión para votar.");
     if (userVote === choice) return alert("Ya elegiste esa opción.");
 
     const { error } = await supa
         .from("votes")
-        .upsert([{ user_id: user.id, choice }], { onConflict: "user_id" })
+        .upsert(
+            [{ poll_id: POLL_ID, user_id: anonId, option: choice }],
+            { onConflict: "user_id" }
+        )
         .select();
 
     if (error) {
@@ -85,7 +94,7 @@ async function handleVote(choice) {
 
     userVote = choice;
     highlightChoice(choice);
-    msgEl.textContent = "Voto actualizado ✅";
+    msgEl.textContent = "Voto registrado ✅";
     await loadVotes();
 }
 
@@ -98,8 +107,8 @@ function highlightChoice(choice) {
 function subscribeRealtime() {
     supa
         .channel("public:votes")
-        .on("postgres_changes", { event: "*", schema: "public", table: "votes" }, () =>
-            loadVotes()
-        )
+        .on("postgres_changes", { event: "*", schema: "public", table: "votes" }, (payload) => {
+            if (payload.new.poll_id === POLL_ID) loadVotes();
+        })
         .subscribe();
 }

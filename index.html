@@ -16,7 +16,7 @@
             <nav class="navbar">
                 <ul class="nav-menu">
                     <li><a href="/">Inicio</a></li>
-                    <li id="userArea"><a href="/login">Iniciar sesión</a></li>
+                    <li><a href="/superclasico">Superclásico 2025 ⚽</a></li>
                 </ul>
             </nav>
         </div>
@@ -24,20 +24,41 @@
 
     <main class="hero">
         <h1>Votaciones Oficiales SATV</h1>
-        <p>Ingresá o registrate para participar en el Superclásico 2025 ⚽</p>
+        <p>Participá en el Superclásico 2025 y elegí quién creés que será el ganador.</p>
     </main>
 
     <section>
         <h2>¿De qué se trata?</h2>
         <p>Participá en nuestra encuesta y elegí quién creés que será el ganador del Superclásico argentino.
-            Los resultados se actualizan en tiempo real.</p>
+            Los resultados se actualizan en tiempo real con datos guardados en Supabase.</p>
+
+        <div
+            class="entry entrada bg-gradient-to-r from-red-600 via-white to-blue-600 rounded-2xl shadow-lg p-6 text-center text-gray-900">
+            <h2 class="title text-2xl font-bold mb-3 uppercase tracking-wide">
+                🏆 Votá quién creés que será el ganador del Superclásico
+            </h2>
+            <p class="synopsis text-lg leading-relaxed">
+                Este <strong>domingo 09/11</strong> se juega el esperado <em>Superclásico</em>, el encuentro
+                futbolístico entre
+                <span class="text-red-700 font-semibold">River Plate</span> y
+                <span class="text-blue-700 font-semibold">Boca Juniors</span>.
+                El partido tendrá lugar en el histórico estadio
+                <strong>Alberto José Armando</strong>, conocido cariñosamente como
+                <em>La Bombonera</em>.
+            </p>
+            <p class="mt-4 text-lg">
+                ¡Dejá tu voto y contanos quién creés que se quedará con la gloria en este combate lleno de
+                <strong>folklore y tradición argentina</strong> 🇦🇷!
+            </p>
+        </div>
     </section>
 
     <footer>
         <p>&copy; 2025 Sol Argentino TV</p>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
-    <script defer src="https://votar.solargentinotv.com.ar/assets/js/app.js"></script>
+    <script defer src="https://votar.solargentinotv.com.ar/assets/js/supabaseClient.js"></script>
 </body>
 
 </html>
