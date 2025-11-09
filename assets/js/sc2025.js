@@ -18,6 +18,7 @@ let anonId = null;
 let userVote = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Generar o recuperar ID anónimo local
     anonId = localStorage.getItem("anon_id");
     if (!anonId) {
         anonId = crypto.randomUUID();
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 });
 
+// === Cargar todos los votos
 async function loadVotes() {
     const { data, error } = await window.supa
         .from("votes")
@@ -55,6 +57,7 @@ async function loadVotes() {
     });
 }
 
+// === Cargar voto del usuario
 async function loadUserVote() {
     const { data, error } = await window.supa
         .from("votes")
@@ -74,19 +77,21 @@ async function loadUserVote() {
     }
 }
 
+// === Manejo de voto
 async function handleVote(choice) {
     if (userVote === choice) return alert("Ya elegiste esa opción.");
 
     const { error } = await window.supa
         .from("votes")
-        .upsert([{ poll_id: POLL_ID, user_id: anonId, option: choice }], {
-            onConflict: "user_id",
-        })
+        .upsert(
+            [{ poll_id: POLL_ID, user_id: anonId, option: choice }],
+            { onConflict: "poll_id, user_id" } // 👈 clave corregida
+        )
         .select();
 
     if (error) {
         console.error(error);
-        alert("Error al votar.");
+        alert("Error al votar. Revisá la consola para más detalles.");
         return;
     }
 
@@ -96,12 +101,14 @@ async function handleVote(choice) {
     await loadVotes();
 }
 
+// === Resaltar opción elegida
 function highlightChoice(choice) {
     optionEls.forEach((o) =>
         o.classList.toggle("active", o.dataset.choice === choice)
     );
 }
 
+// === Suscribirse a cambios en tiempo real
 function subscribeRealtime() {
     window.supa
         .channel("public:votes")
