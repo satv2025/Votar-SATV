@@ -15,6 +15,17 @@ body {
     box-sizing: border-box;
 }
 
+img.thumbnail-img {
+    width: auto;
+    margin-right: 1em;
+    height: 15.9em;
+    margin-left: -5em;
+    position: absolute;
+    margin-top: -0.97em;
+    border-top-left-radius: 0.3em;
+    border-bottom-left-radius: 0.3em;
+}
+
 section h2 {
     text-align: center;
 }
@@ -171,31 +182,30 @@ footer {
 .entry {
     display: flex;
     align-items: flex-start;
-    background: #fff;
-    border-radius: 12px;
+    background: #ffffff;
+    border-radius: 0.3em;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin: 20px auto;
-    max-width: 750px;
     padding: 16px;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
-    font-family: "Roboto", "Arial", sans-serif;
+    text-align: justify;
+    width: 75em;
 }
 
-.entry:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-3px);
-}
+.entry:hover {}
 
 /* Imagen miniatura */
 .thumbnail {
-    flex: 0 0 140px;
     margin-right: 16px;
     border-radius: 8px;
     overflow: hidden;
+    width: 22.1em;
+    margin-top: 0.7em;
+    margin-left: 0.6em;
 }
 
 .thumbnail img {
-    width: 100%;
+    width: 102%;
     height: auto;
     display: block;
     border-radius: 8px;
@@ -203,13 +213,15 @@ footer {
     transition: transform 0.3s ease;
 }
 
-.thumbnail img:hover {
-    transform: scale(1.05);
-}
+.thumbnail img:hover {}
 
 /* Contenido a la derecha */
 .content {
     flex: 1;
+}
+
+.content {
+    margin-left: 26em;
 }
 
 .title {
@@ -244,20 +256,22 @@ footer {
 
 /* Botón tipo Blogger moderno */
 button {
-    background-color: #1a73e8;
-    color: #fff;
-    border: none;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
     padding: 8px 18px;
     font-size: 0.9rem;
-    border-radius: 20px;
-    font-weight: 500;
+    border-radius: 0.3em;
+    font-weight: 700;
+    background: #fff;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 12em;
+    margin-top: 0em;
 }
 
 button:hover {
-    background-color: #0b57d0;
-    transform: translateY(-2px);
+    background-color: #1a73e8;
+    color: #fff;
 }
 
 /* Responsivo (mobile) */
