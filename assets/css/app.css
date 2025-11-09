@@ -15,6 +15,10 @@ body {
     box-sizing: border-box;
 }
 
+section h2 {
+    text-align: center;
+}
+
 /* Header con blur */
 header {
     position: fixed;
@@ -117,11 +121,12 @@ header {
 
 section {
     background: rgba(255, 255, 255, 0.8);
-    max-width: 56em;
     margin: 3em auto;
     padding: 2em;
     border-radius: 1em;
     box-shadow: 0 0.25em 1em rgba(0, 0, 0, 0.1);
+    width: 75em;
+    text-align: justify;
 }
 
 input,
@@ -141,7 +146,7 @@ button {
 }
 
 button:hover {
-    background: #005fa3;
+    background: #1a73e8;
 }
 
 .google-btn {
@@ -160,4 +165,123 @@ footer {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     position: relative;
+}
+
+/* Contenedor principal */
+.entry {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin: 20px auto;
+    max-width: 750px;
+    padding: 16px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    font-family: "Roboto", "Arial", sans-serif;
+}
+
+.entry:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+/* Imagen miniatura */
+.thumbnail {
+    flex: 0 0 140px;
+    margin-right: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.thumbnail img:hover {
+    transform: scale(1.05);
+}
+
+/* Contenido a la derecha */
+.content {
+    flex: 1;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.synopsis {
+    color: #444;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.cta {
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.river {
+    color: #c1121f;
+    font-weight: 600;
+}
+
+.boca {
+    color: #003566;
+    font-weight: 600;
+}
+
+/* Botón tipo Blogger moderno */
+button {
+    background-color: #1a73e8;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #0b57d0;
+    transform: translateY(-2px);
+}
+
+/* Responsivo (mobile) */
+@media (max-width: 600px) {
+    .entry {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .thumbnail {
+        margin-right: 0;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+
+    .title {
+        font-size: 1rem;
+    }
+
+    .synopsis {
+        font-size: 0.9rem;
+    }
+
+    button {
+        font-size: 0.85rem;
+    }
 }
