@@ -1,7 +1,7 @@
 // ===============================
 // ⚽ SUPERCLÁSICO 2025 - ENCUESTA ANÓNIMA (SUPABASE)
 // ===============================
-const supa = window.supa;
+
 const POLL_ID = "superclasico-2025";
 
 const choices = ["river", "empate", "boca"];
@@ -18,7 +18,6 @@ let anonId = null;
 let userVote = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Generar o recuperar ID anónimo local
     anonId = localStorage.getItem("anon_id");
     if (!anonId) {
         anonId = crypto.randomUUID();
@@ -35,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function loadVotes() {
-    const { data, error } = await supa
+    const { data, error } = await window.supa
         .from("votes")
         .select("option")
         .eq("poll_id", POLL_ID);
@@ -57,7 +56,7 @@ async function loadVotes() {
 }
 
 async function loadUserVote() {
-    const { data, error } = await supa
+    const { data, error } = await window.supa
         .from("votes")
         .select("option")
         .eq("poll_id", POLL_ID)
@@ -78,12 +77,11 @@ async function loadUserVote() {
 async function handleVote(choice) {
     if (userVote === choice) return alert("Ya elegiste esa opción.");
 
-    const { error } = await supa
+    const { error } = await window.supa
         .from("votes")
-        .upsert(
-            [{ poll_id: POLL_ID, user_id: anonId, option: choice }],
-            { onConflict: "user_id" }
-        )
+        .upsert([{ poll_id: POLL_ID, user_id: anonId, option: choice }], {
+            onConflict: "user_id",
+        })
         .select();
 
     if (error) {
@@ -105,7 +103,7 @@ function highlightChoice(choice) {
 }
 
 function subscribeRealtime() {
-    supa
+    window.supa
         .channel("public:votes")
         .on("postgres_changes", { event: "*", schema: "public", table: "votes" }, (payload) => {
             if (payload.new.poll_id === POLL_ID) loadVotes();
