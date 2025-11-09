@@ -1,7 +1,7 @@
 // ===============================
 // 👤 Autenticación de usuario (SATV)
 // ===============================
-import { supa } from "./supabaseClient.js";
+const supa = window.supa; // ✅ reemplaza el import
 
 // === Actualizar área de usuario (header)
 async function updateUserArea() {
@@ -28,12 +28,10 @@ async function updateUserArea() {
         const btn = dropdown.querySelector(".dropdown-btn");
         btn.addEventListener("click", () => dropdown.classList.toggle("show"));
 
-        // Cerrar menú si se hace clic fuera
         document.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) dropdown.classList.remove("show");
         });
 
-        // Cerrar sesión
         dropdown.querySelector("#logoutBtn").addEventListener("click", async (e) => {
             e.preventDefault();
             await supa.auth.signOut();
@@ -58,21 +56,16 @@ async function updateUserArea() {
 
 // === Manejo de Login y Registro ===
 document.addEventListener("DOMContentLoaded", () => {
-    // === LOGIN ===
+    // LOGIN
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const emailInput = document.getElementById("email");
-            const passwordInput = document.getElementById("password");
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
 
-            if (!email || !password) {
-                alert("Por favor completá todos los campos.");
-                return;
-            }
+            if (!email || !password) return alert("Por favor completá todos los campos.");
 
             try {
                 const { error } = await supa.auth.signInWithPassword({ email, password });
@@ -83,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Login con Google
         const googleBtn = document.getElementById("googleLogin");
         if (googleBtn) {
             googleBtn.addEventListener("click", async () => {
@@ -95,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // === REGISTRO ===
+    // REGISTRO
     const registerForm = document.getElementById("registerForm");
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -106,25 +98,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
 
-            if (!email || !password) {
-                alert("Por favor completá todos los campos.");
-                return;
-            }
+            if (!email || !password) return alert("Por favor completá todos los campos.");
 
             try {
-                // Crear usuario
                 const { error: signUpError } = await supa.auth.signUp({
                     email,
                     password,
                     options: {
                         data: { username, fullname },
-                        emailRedirectTo: null, // evita verificación
+                        emailRedirectTo: null,
                     },
                 });
-
                 if (signUpError) throw signUpError;
 
-                // Iniciar sesión automáticamente
                 const { error: signInError } = await supa.auth.signInWithPassword({
                     email,
                     password,
